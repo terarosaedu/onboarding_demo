@@ -376,12 +376,14 @@ async function submitQuiz() {
 }
 
 function closeDoneFromQuiz() {
+  const finishedIdx = currentQuizIdx; // ← 초기화 전에 미리 저장
   closeQuiz();
   // 완료 모달
   document.getElementById('doneTitle').textContent = '이수 완료! 🎉';
-  document.getElementById('doneMsg').textContent = `${COURSES[currentQuizIdx !== null ? currentQuizIdx : 0]?.name || '교육'}을 이수했습니다.\n수고하셨어요, ${userName}님!`;
+  document.getElementById('doneMsg').textContent = `${COURSES[finishedIdx]?.name || '교육'}을(를) 이수했습니다.\n수고하셨어요, ${userName}님!`;
   document.getElementById('doneModal').style.display = 'flex';
 }
+
 
 function closeDone() {
   document.getElementById('doneModal').style.display = 'none';
