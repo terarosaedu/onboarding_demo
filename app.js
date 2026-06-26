@@ -1,25 +1,17 @@
 
+// 기존 SUPABASE_URL, SUPABASE_KEY, dbInsert 삭제하고 아래로 교체
 
-// ══════════════════════════════════════════════════
-// ★ 여기에 Supabase 정보를 입력하세요 ★
-// ══════════════════════════════════════════════════
-const SUPABASE_URL = 'https://iauhcswapjyyylnehmcp.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_GHm8hWXwdpI6MttTruxyrw_w5f22l5H'; // ← Publishable key로 교체
-// ══════════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsNdoFAOWGDRI-buyKOGrn66dlNw7QPkm83PMy1RGqgLJlmGdLmrHm9pfuyOYMW2Mg/exec';
 
 async function dbInsert(table, data) {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify(data)
+      body: JSON.stringify({ table, payload: data }),
+      redirect: 'follow'  // Apps Script 리다이렉트 대응
     });
-    return res.ok;
+    const json = await res.json();
+    return json.success;
   } catch (e) {
     console.error('DB 오류:', e);
     return false;
@@ -363,7 +355,6 @@ async function submitQuiz() {
   const timeStr = now.toLocaleDateString('ko-KR') + ' ' + now.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
   completions[course.id] = { time: timeStr };
   saveLocal();
-  await dbInsert('completions', { name: userName, course_name: course.name });
   renderCourses();
   updateProgressUI();
 
